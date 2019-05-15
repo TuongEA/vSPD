@@ -1,43 +1,54 @@
-$inlinecom { }
+*+++ vSPD settings +++
+$inlinecom ## ##
 $eolcom !
-***vSPD solve settings***
-**Model**
-Scalar i_SequentialSolve                  /0/;        !Vectorisation: Yes <-> i_SequentialSolve: 0
-**Network**
-Scalar i_UseACLossModel                   /1/;
-Scalar i_UseHVDCLossModel                 /1/;
-Scalar i_UseACBranchLimits                /1/;
-Scalar i_UseHVDCBranchLimits              /1/;
-Scalar i_ResolveCircularBranchFlows       /1/;
-Scalar i_ResolveHVDCNonPhysicalLosses     /1/;
-Scalar i_ResolveACNonPhysicalLosses       /0/;   !Placeholder for future code development.
-Scalar CircularBranchFlowTolerance        /0.000001/;
-Scalar NonPhysicalLossTolerance           /0.000001/;
-Scalar UseBranchFlowMIPTolerance          /0.000001/;
-**Constraints**
-Scalar i_UseReserveModel                  /1/;
-Scalar i_UseMixedConstraint               /1/;
-Scalar MixedMIPTolerance                  /0.000001/;
-**Solver**
-$setglobal    Solver                       CPLEX
-Scalar LPTimeLimit                        /600/;
-Scalar MIPTimeLimit                       /600/;
-Scalar MIPOptimality                      /0/;
-Scalar LPIterationLimit                   /1000000/;
-Scalar MIPIterationLimit                  /1000000/;
-**Reports**
-*Specify if want reporting at trade period level (1 = Yes, 0 = No)
-$setglobal    TradePeriodReports           1
-**Misc**
-Scalar i_DisconnctedNodePriceCorrection    /1/;
-$setglobal    VarResv                       -1
-**External loss model from Transpower**
-Scalar i_UseExternalLossModel    /1/;
-Scalar LossCoeff_A    /0.3101/;
-Scalar LossCoeff_C    /0.14495/;
-Scalar LossCoeff_D    /0.32247/;
-Scalar LossCoeff_E    /0.46742/;
-Scalar LossCoeff_F    /0.82247/;
-Scalar MaxFlowSegment    /10000/;
-*Set this flag to invoke the datawarehouse mode*
-$setglobal    DWMode           1
+
+*+++ Paths +++
+$setglobal runName                       Test
+
+$setglobal programPath                   '%system.fp%'
+$setglobal inputPath                     '%system.fp%..\Input\'
+$setglobal ovrdPath                      '%system.fp%..\Override\'
+$setglobal outputPath                    '%system.fp%..\Output\'
+
+$setglobal vSPDinputOvrdData             'excelOverrides'  ! Name of override file
+
+
+*+++ Model +++
+Scalar sequentialSolve                   / 0 / ;   ! Vectorisation: Yes <-> i_SequentialSolve: 0
+Scalar disconnectedNodePriceCorrection   / 1 / ;
+Scalar tradePeriodReports                / 1 / ;   ! Specify 1 for reports at trading period level, 0 otherwise
+
+
+*+++ Network +++
+Scalar useACLossModel                    / 1 / ;
+Scalar useHVDCLossModel                  / 1 / ;
+Scalar useACBranchLimits                 / 1 / ;
+Scalar useHVDCBranchLimits               / 1 / ;
+Scalar resolveCircularBranchFlows        / 1 / ;
+Scalar resolveHVDCNonPhysicalLosses      / 1 / ;
+Scalar resolveACNonPhysicalLosses        / 0 / ;   ! Placeholder for future code development
+Scalar circularBranchFlowTolerance       / 0.000001 / ;
+Scalar nonPhysicalLossTolerance          / 0.000001 / ;
+Scalar useBranchFlowMIPTolerance         / 0.000001 / ;
+
+
+*+++ Constraints +++
+Scalar useReserveModel                   / 1 / ;
+Scalar suppressMixedConstraint           / 0 / ;
+Scalar mixedMIPtolerance                 / 0.000001 / ;
+
+
+*+++ Solver +++
+Scalar LPtimeLimit                       / 3600 / ;
+Scalar LPiterationLimit                  / 2000000000 / ;
+Scalar MIPtimeLimit                      / 3600 / ;
+Scalar MIPiterationLimit                 / 2000000000 / ;
+Scalar MIPoptimality                     / 0 / ;
+$setglobal Solver                          Cplex
+$setglobal licenseMode                     1
+
+
+*+++ Various switches +++
+$setglobal varResv                         -1
+$setglobal opMode                          SPD      ! DWH for data warehouse; AUD for audit; FTR for FTR Rental; SPD for normal SPD run; PVT for pivot analysis; DPS for demand~price sensitivity analysis
+

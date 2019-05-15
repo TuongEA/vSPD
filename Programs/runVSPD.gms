@@ -1,166 +1,151 @@
-$ontext
-===================================================================================
-Name: runVSPD.gms
-Function: This controls the whole process in standalone mode
-Developed by: Ramu Naidoo (Electricity Authority, New Zealand)
-Last modified: 09 October 2012
-===================================================================================
-$offtext
+*=====================================================================================
+* Name:                 runvSPD.gms
+* Function:             This file is invoked to control the entire operation of vSPD.
+* Developed by:         Electricity Authority, New Zealand
+* Source:               https://github.com/ElectricityAuthority/vSPD
+*                       http://www.emi.ea.govt.nz/Tools/vSPD
+* Contact:              Forum: http://www.emi.ea.govt.nz/forum/
+*                       Email: emi@ea.govt.nz
+* Last modified on:     23 Sept 2016
+*=====================================================================================
+
 
 $call cls
 $onecho > con
-*****************************************************************
-***********************EXECUTING vSPD v1.3***********************
-*****************************************************************
+*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+*+++++++++++++++++++++ EXECUTING vSPD v3.0.0 +++++++++++++++++++++
+*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 $offecho
 
-*==================================
-*Definitions and general settings
-*==================================
 
-*Include settings file
-$include vSPDpaths.inc
+*=====================================================================================
+*Include paths and settings files
+*=====================================================================================
 $include vSPDsettings.inc
 
-*File definition
+
+*=====================================================================================
+* Create a progress report file
+*=====================================================================================
+File rep "Write a progess report" /"ProgressReport.txt"/ ;  rep.lw = 0 ;
+putclose rep "Run: '%runName%'" //
+             "runvSPD started at: " system.date " " system.time;
+
+
+*=====================================================================================
+* Define external files
+*=====================================================================================
 Files
-temp
-vSPDcase "Current input case file being solved" / "vSPDcase.inc" / ; vSPDcase.lw = 0; vSPDcase.sw = 0
+temp       "A temporary, recyclable batch file"
+vSPDcase   "The current input case file"      / "vSPDcase.inc" /;
+vSPDcase.lw = 0 ;   vSPDcase.sw = 0 ;
+
+
+*=====================================================================================
+* Install the set of input GDX file names over which the solve and reporting loops will operate
+*=====================================================================================
+$Onempty
+Set i_fileName(*) 'Input GDX file names'
+$include vSPDfileList.inc
 ;
+$Offempty
 
-*Call setup file
-put_utility temp 'exec' / 'gams runVSPDSetup';
+*=====================================================================================
+* Compiling vSPDModel if required
+* Establish the output folders for the current job
+* Copy program codes for repeatability and reproducibility
+*=====================================================================================
+rep.ap = 1 ;
+putclose rep "vSPDsetup started at: " system.date " " system.time ;
 
-*Now execute in standalone mode
+* Invoke vSPDmodel if license type is developer (licenseMode=1)
+$if %licenseMode%==1 $call gams vSPDmodel.gms s=vSPDmodel
+$if errorlevel 1     $abort +++ Check vSPDmodel.lst for errors +++
 
-*Scalar to keep track of the run number
-Scalar RunNum  /1/;
+execute 'if exist "%outputPath%%runName%" rmdir "%outputPath%%runName%" /s /q';
+execute 'if exist "%programPath%lst"  rmdir "%programPath%lst" /s /q';
+execute 'mkdir "%programPath%lst"';
+execute 'mkdir "%outputPath%%runName%\Programs"';
+execute 'copy /y vSPD*.inc "%outputPath%%runName%\Programs"'
+execute 'copy /y *.gms "%outputPath%%runName%\Programs"'
+execute 'copy /y cplex.opt "%outputPath%%runName%\Programs"'
 
-SETS
-*Input file name
-i_FileName(*)       'Filenames'
-;
+$ifthen exist "%ovrdPath%%vSPDinputOvrdData%.gdx"
+  execute 'mkdir  "%outputPath%%runName%\Override"'
+  execute 'copy /y "%ovrdPath%%vSPDinputOvrdData%.gdx" "%outputPath%%runName%\Override"'
+$endif
 
-*If in datawarehouse mode skip the xls file read process
-$if %DWMode%==1 $goto SkipxlsFileRead
-
-* Import input data from Excel data file via GDX.
-* Write arguments for the GDX call to gdxVSPDInputData.ins:
-$ONECHO > gdxInputFileName.ins
-* Parameters and sets
-         set = i_FileName                rng = i_FileName                  rdim = 1
-$OFFECHO
-
-* Call the GDX routine and load the input data:
-$CALL 'GDXXRW "%ProgramPath%%VSPDInputFileName%.xls" o=InputFileName.gdx "@gdxInputFileName.ins"'
-$GDXIN InputFileName.gdx
-
-$LOAD i_FileName
-*Close the gdx
-$GDXIN
-
-*Loop over all the specified files and run the model
-loop(i_FileName,
-
-*Create file that has the current case input file being solved
-    putclose vSPDcase "$setglobal       VSPDInputData         " i_Filename.tl:0 / "$setglobal       VSPDRunNum         " RunNum:0;
-
-*Update run number
-    RunNum = RunNum + 1;
-
-*Run the model
-    put_utility temp 'exec' / 'gams runVSPDSolve';
-
-);
-$label SkipxlsFileRead
+$iftheni %opMode%=='PVT'
+  execute 'mkdir  "%outputPath%%runName%\Programs\Pivot"'
+  execute 'copy /y "Pivot\*.*" "%outputPath%%runName%\Programs\Pivot"'
+$elseifi %opMode%=='DPS' execute 'gams Demand\DPSreportSetup.gms'
+  execute 'mkdir  "%outputPath%%runName%\Programs\Demand"'
+  execute 'copy /y "Demand\*.*" "%outputPath%%runName%\Programs\Demand"'
+$elseifi %opMode%=='FTR' execute 'gams FTRental\FTRreportSetup.gms'
+  execute 'copy /y FTR*.inc "%outputPath%%runName%\Programs"'
+  execute 'mkdir  "%outputPath%%runName%\Programs\FTRental"'
+  execute 'copy /y "FTRental\*.*" "%outputPath%%runName%\Programs\FTRental"'
+$elseifi %opMode%=='DWH' execute 'gams DWmode\DWHreportSetup.gms'
+  execute 'mkdir  "%outputPath%%runName%\Programs\DWMode"'
+  execute 'copy /y "DWmode\*.*" "%outputPath%%runName%\Programs\DWMode"'
+$else
+$endif
 
 
-*TN - If NOT in datawarehouse mode skip the DW solve process
-$if not %DWMode%==1 $goto SkipDWSolve
-
-   put_utility temp 'exec' / 'gams runVSPDSolve';
-
-$label SkipDWSolve
-
-
-*==================================
-*Report Results
-*==================================
-
-*Setup the report templates
-put_utility temp 'exec' / 'gams VSPDReportSetup';
-
-*If in datawarehouse mode skip the normal vSPD report process
-$if %DWMode%==1 $goto SkipvSPDReportProcess
-
-*Reset the run num
-RunNum = 1;
-
-*Loop over all the specified files and update the reports
-loop(i_FileName,
-
-*Create file that has the current input case file being solved
-    putclose vSPDcase "$setglobal       VSPDInputData         " i_Filename.tl:0 / "$setglobal       VSPDRunNum         " RunNum:0;
-*Report the results
-    put_utility temp 'exec' / 'gams runVSPDReport';
-*$call gams runVSPDReport.gms
-
-*Remove the temp output files
-    put_utility temp 'shell' / 'del %OutputPath%%runName%\RunNum'RunNum:0'_SystemOutput.gdx';
-    put_utility temp 'shell' / 'del %OutputPath%%runName%\RunNum'RunNum:0'_OfferOutput.gdx';
-    put_utility temp 'shell' / 'del %OutputPath%%runName%\RunNum'RunNum:0'_TraderOutput.gdx';
-
-    if (%TradePeriodReports% = 1,
-       put_utility temp 'shell' / 'del %OutputPath%%runName%\RunNum'RunNum:0'_SummaryOutput_TP.gdx';
-       put_utility temp 'shell' / 'del %OutputPath%%runName%\RunNum'RunNum:0'_IslandOutput_TP.gdx';
-       put_utility temp 'shell' / 'del %OutputPath%%runName%\RunNum'RunNum:0'_BusOutput_TP.gdx';
-       put_utility temp 'shell' / 'del %OutputPath%%runName%\RunNum'RunNum:0'_BranchOutput_TP.gdx';
-       put_utility temp 'shell' / 'del %OutputPath%%runName%\RunNum'RunNum:0'_NodeOutput_TP.gdx';
-       put_utility temp 'shell' / 'del %OutputPath%%runName%\RunNum'RunNum:0'_OfferOutput_TP.gdx';
-       put_utility temp 'shell' / 'del %OutputPath%%runName%\RunNum'RunNum:0'_ReserveOutput_TP.gdx';
-       put_utility temp 'shell' / 'del %OutputPath%%runName%\RunNum'RunNum:0'_BrConstraintOutput_TP.gdx';
-       put_utility temp 'shell' / 'del %OutputPath%%runName%\RunNum'RunNum:0'_MNodeConstraintOutput_TP.gdx';
-*TN - Additional output for audit reporting
-      if (%DWMode%=-1,
-         put_utility temp 'shell' / 'del %OutputPath%%runName%\RunNum'RunNum:0'_AuditOutput_TP.gdx';
-      );
-    );
-*TN - Additional output for audit reporting - End
+*=====================================================================================
+* Initialize reports
+*=====================================================================================
+* Call vSPDreportSetup to establish the report files ready to write results into
+$iftheni %opMode%=='PVT' execute 'gams Pivot\PivotReportSetup.gms'
+$elseifi %opMode%=='DPS' execute 'gams Demand\DPSreportSetup.gms'
+$elseifi %opMode%=='FTR' execute 'gams FTRental\FTRreportSetup.gms'
+$elseifi %opMode%=='DWH' execute 'gams DWmode\DWHreportSetup.gms'
+$else                    execute 'gams vSPDreportSetup.gms'
+$endif
 
 
-*Update run number
-    RunNum = RunNum + 1;
-);
-$label SkipvSPDReportProcess
+*=====================================================================================
+* Solve vSPD and report - loop over the designated input GDX files and solve each one in turn.
+*=====================================================================================
+loop(i_fileName,
+
+*  Create the file that has the name of the input file for the current case being solved
+   putclose vSPDcase "$setglobal  vSPDinputData  " i_fileName.tl:0 ;
+
+*  Create a gdx file contains periods to be solved
+   put_utility temp 'exec' / 'gams vSPDperiod' ;
+
+*  Solve the model for the current input file
+   put_utility temp 'exec' / 'gams vSPDsolve.gms r=vSPDmodel lo=3 ide=1 Errmsg = 1 holdFixed = 0' ;
+
+*  Copy the vSPDsolve.lst file to i_fileName.lst in ..\Programs\lst\
+   put_utility temp 'shell' / 'copy vSPDsolve.lst "%programPath%"\lst\', i_fileName.tl:0, '.lst' ;
+
+) ;
+rep.ap = 1 ;
+putclose rep / "Total execute time: " timeExec "(secs)" /;
 
 
-*TN - If NOT in datawarehouse mode skip the DW report process
-$if not %DWMode%==1 $goto SkipDWReportProcess
+*=====================================================================================
+* Clean up
+*=====================================================================================
+$label cleanUp
+execute 'erase "vSPDcase.inc"' ;
+execute 'erase "riskGroup.inc"' ;
+$ifthen %opMode%=='DWH'
+execute 'move /y ProgressReport.txt "%outputPath%%runName%\%runName%_RunLog.txt"';
+$else
+execute 'move /y ProgressReport.txt "%outputPath%%runName%"';
+$endif
+$ontext
+execute 'if exist *.lst   erase /q *.lst '
+execute 'if exist *.~gm   erase /q *.~gm '
+execute 'if exist *.lxi   erase /q *.lxi '
+execute 'if exist *.log   erase /q *.log '
+execute 'if exist *.put   erase /q *.put '
+execute 'if exist *.txt   erase /q *.txt '
+execute 'if exist *.gdx   erase /q *.gdx '
+execute 'if exist temp.*  erase /q temp.*'
+$offtext
 
-put_utility temp 'exec' / 'gams runVSPDReport';
-
-*Remove the temp output files
-put_utility temp 'shell' / 'del %OutputPath%%runName%\RunNum'RunNum:0'_SystemOutput.gdx';
-put_utility temp 'shell' / 'del %OutputPath%%runName%\RunNum'RunNum:0'_OfferOutput.gdx';
-put_utility temp 'shell' / 'del %OutputPath%%runName%\RunNum'RunNum:0'_TraderOutput.gdx';
-
-if (%TradePeriodReports% = 1,
-    put_utility temp 'shell' / 'del %OutputPath%%runName%\RunNum'RunNum:0'_SummaryOutput_TP.gdx';
-    put_utility temp 'shell' / 'del %OutputPath%%runName%\RunNum'RunNum:0'_IslandOutput_TP.gdx';
-    put_utility temp 'shell' / 'del %OutputPath%%runName%\RunNum'RunNum:0'_BusOutput_TP.gdx';
-    put_utility temp 'shell' / 'del %OutputPath%%runName%\RunNum'RunNum:0'_BranchOutput_TP.gdx';
-    put_utility temp 'shell' / 'del %OutputPath%%runName%\RunNum'RunNum:0'_NodeOutput_TP.gdx';
-    put_utility temp 'shell' / 'del %OutputPath%%runName%\RunNum'RunNum:0'_OfferOutput_TP.gdx';
-    put_utility temp 'shell' / 'del %OutputPath%%runName%\RunNum'RunNum:0'_ReserveOutput_TP.gdx';
-    put_utility temp 'shell' / 'del %OutputPath%%runName%\RunNum'RunNum:0'_BrConstraintOutput_TP.gdx';
-    put_utility temp 'shell' / 'del %OutputPath%%runName%\RunNum'RunNum:0'_MNodeConstraintOutput_TP.gdx';
-);
-
-$label SkipDWReportProcess
-
-*==================================
-*Cleanup
-*==================================
-execute 'del *.ins';
-execute 'del InputFileName.gdx';
 
