@@ -66,44 +66,78 @@ putclose rep "vSPDsetup started at: " system.date " " system.time ;
 $if %licenseMode%==1 $call gams vSPDmodel.gms s=vSPDmodel
 $if errorlevel 1     $abort +++ Check vSPDmodel.lst for errors +++
 
-execute 'if exist "%outputPath%%runName%" rmdir "%outputPath%%runName%" /s /q';
-execute 'if exist "%programPath%lst"  rmdir "%programPath%lst" /s /q';
-execute 'mkdir "%programPath%lst"';
-execute 'mkdir "%outputPath%%runName%\Programs"';
-execute 'copy /y vSPD*.inc "%outputPath%%runName%\Programs"'
-execute 'copy /y *.gms "%outputPath%%runName%\Programs"'
-execute 'copy /y cplex.opt "%outputPath%%runName%\Programs"'
+$ifThen %system.Platform% == 'LEX'
+    execute 'if [ -d "%outputPath%/%runName%" ]; then rm -rf "%outputPath%/%runName%"; fi';
+    execute 'if [ -d "%programPath%lst" ]; then rm -rf "%programPath%lst"; fi';
+    execute 'mkdir -p "%programPath%lst"';
+    execute 'mkdir -p "%outputPath%/%runName%/Programs"';
+    execute 'cp -r vSPD*.inc "%outputPath%/%runName%/Programs"';
+    execute 'cp -r *.gms "%outputPath%/%runName%/Programs"';
+    execute 'cp -r cplex.opt "%outputPath%/%runName%/Programs"';
+$else
+    execute 'if exist "%outputPath%%runName%" rmdir "%outputPath%%runName%" /s /q';
+    execute 'if exist "%programPath%lst"  rmdir "%programPath%lst" /s /q';
+    execute 'mkdir "%programPath%lst"';
+    execute 'mkdir "%outputPath%%runName%\Programs"';
+    execute 'copy /y vSPD*.inc "%outputPath%%runName%\Programs"'
+    execute 'copy /y *.gms "%outputPath%%runName%\Programs"'
+    execute 'copy /y cplex.opt "%outputPath%%runName%\Programs"'
+$endIf
 
-$ifthen exist "%ovrdPath%%vSPDinputOvrdData%.gdx"
-  execute 'mkdir  "%outputPath%%runName%\Override"'
-  execute 'copy /y "%ovrdPath%%vSPDinputOvrdData%.gdx" "%outputPath%%runName%\Override"'
-$endif
+$ifthen.ovrd exist "%ovrdPath%%vSPDinputOvrdData%.gdx"
+$ifThen.sys %system.Platform% == 'LEX'
+    execute 'mkdir -p "%outputPath%/%runName%/Override"'
+    execute 'cp "%ovrdPath%/%vSPDinputOvrdData%.gdx" 
+$else.sys
+    execute 'mkdir  "%outputPath%%runName%\Override"'
+    execute 'copy /y "%ovrdPath%%vSPDinputOvrdData%.gdx" "%outputPath%%runName%\Override"'
+$endif.sys
+$endif.ovrd
 
-$iftheni %opMode%=='PVT'
+$ifThen.sys %system.Platform% == 'LEX'
+$iftheni.mode %opMode%=='PVT'
   execute 'mkdir  "%outputPath%%runName%\Programs\Pivot"'
   execute 'copy /y "Pivot\*.*" "%outputPath%%runName%\Programs\Pivot"'
-$elseifi %opMode%=='DPS' execute 'gams Demand\DPSreportSetup.gms'
+$elseifi.mode %opMode%=='DPS' execute 'gams Demand\DPSreportSetup.gms'
   execute 'mkdir  "%outputPath%%runName%\Programs\Demand"'
   execute 'copy /y "Demand\*.*" "%outputPath%%runName%\Programs\Demand"'
-$elseifi %opMode%=='FTR' execute 'gams FTRental\FTRreportSetup.gms'
+$elseifi.mode %opMode%=='FTR' execute 'gams FTRental\FTRreportSetup.gms'
   execute 'copy /y FTR*.inc "%outputPath%%runName%\Programs"'
   execute 'mkdir  "%outputPath%%runName%\Programs\FTRental"'
   execute 'copy /y "FTRental\*.*" "%outputPath%%runName%\Programs\FTRental"'
-$elseifi %opMode%=='DWH' execute 'gams DWmode\DWHreportSetup.gms'
+$elseifi.mode %opMode%=='DWH' execute 'gams DWmode\DWHreportSetup.gms'
   execute 'mkdir  "%outputPath%%runName%\Programs\DWMode"'
   execute 'copy /y "DWmode\*.*" "%outputPath%%runName%\Programs\DWMode"'
-$else
-$endif
+$else.mode
+$endif.mode
+$else.sys
+$iftheni.mode %opMode%=='PVT'
+  execute 'mkdir  "%outputPath%%runName%\Programs\Pivot"'
+  execute 'copy /y "Pivot\*.*" "%outputPath%%runName%\Programs\Pivot"'
+$elseifi.mode %opMode%=='DPS' execute 'gams Demand\DPSreportSetup.gms'
+  execute 'mkdir  "%outputPath%%runName%\Programs\Demand"'
+  execute 'copy /y "Demand\*.*" "%outputPath%%runName%\Programs\Demand"'
+$elseifi.mode %opMode%=='FTR' execute 'gams FTRental\FTRreportSetup.gms'
+  execute 'copy /y FTR*.inc "%outputPath%%runName%\Programs"'
+  execute 'mkdir  "%outputPath%%runName%\Programs\FTRental"'
+  execute 'copy /y "FTRental\*.*" "%outputPath%%runName%\Programs\FTRental"'
+$elseifi.mode %opMode%=='DWH' execute 'gams DWmode\DWHreportSetup.gms'
+  execute 'mkdir  "%outputPath%%runName%\Programs\DWMode"'
+  execute 'copy /y "DWmode\*.*" "%outputPath%%runName%\Programs\DWMode"'
+$else.mode
+$endif.mode
+$endif.sys
+
 
 
 *=====================================================================================
 * Initialize reports
 *=====================================================================================
 * Call vSPDreportSetup to establish the report files ready to write results into
-$iftheni %opMode%=='PVT' execute 'gams Pivot\PivotReportSetup.gms'
-$elseifi %opMode%=='DPS' execute 'gams Demand\DPSreportSetup.gms'
-$elseifi %opMode%=='FTR' execute 'gams FTRental\FTRreportSetup.gms'
-$elseifi %opMode%=='DWH' execute 'gams DWmode\DWHreportSetup.gms'
+$iftheni %opMode%=='PVT' execute 'gams Pivot/PivotReportSetup.gms'
+$elseifi %opMode%=='DPS' execute 'gams Demand/DPSreportSetup.gms'
+$elseifi %opMode%=='FTR' execute 'gams FTRental/FTRreportSetup.gms'
+$elseifi %opMode%=='DWH' execute 'gams DWmode/DWHreportSetup.gms'
 $else                    execute 'gams vSPDreportSetup.gms'
 $endif
 
@@ -123,8 +157,11 @@ loop(i_fileName,
    put_utility temp 'exec' / 'gams vSPDsolve.gms r=vSPDmodel lo=3 ide=1 Errmsg = 1 holdFixed = 0' ;
 
 *  Copy the vSPDsolve.lst file to i_fileName.lst in ..\Programs\lst\
-   put_utility temp 'shell' / 'copy vSPDsolve.lst "%programPath%"\lst\', i_fileName.tl:0, '.lst' ;
-
+$ifThen %system.Platform% == 'LEX'
+   put_utility temp 'shell' / 'cp vSPDsolve.lst "%programPath%"/lst/', i_fileName.tl:0, '.lst' ;
+$else
+    put_utility temp 'shell' / 'copy vSPDsolve.lst "%programPath%"/lst/', i_fileName.tl:0, '.lst' ;
+$endif
 ) ;
 rep.ap = 1 ;
 putclose rep / "Total execute time: " timeExec "(secs)" /;
@@ -134,20 +171,43 @@ putclose rep / "Total execute time: " timeExec "(secs)" /;
 * Clean up
 *=====================================================================================
 $label cleanUp
-*execute 'erase "vSPDcase.inc"' ;
-$ifthen %opMode%=='DWH'
-execute 'move /y ProgressReport.txt "%outputPath%%runName%\%runName%_RunLog.txt"';
-$else
-execute 'move /y ProgressReport.txt "%outputPath%%runName%"';
-$endif
-*execute 'if exist *.lst   erase /q *.lst '
-*execute 'if exist *.~gm   erase /q *.~gm '
-*execute 'if exist *.lxi   erase /q *.lxi '
-*execute 'if exist *.log   erase /q *.log '
-*execute 'if exist *.put   erase /q *.put '
-*execute 'if exist *.txt   erase /q *.txt '
-**execute 'if exist *.gdx   erase /q *.gdx '
-*execute 'if exist temp.*  erase /q temp.*'
 
+$ifThen.sys %system.Platform% == 'LEX'
+
+$ifthen.mode %opMode%=='DWH'
+    execute 'mv -f ProgressReport.txt "%outputPath%%runName%\%runName%_RunLog.txt"';
+$else.mode
+    execute 'mv -f ProgressReport.txt "%outputPath%%runName%"';
+$endif.mode
+    
+    execute 'mv "vSPDcase.inc"' ;
+    execute 'if [ -f *.lst ]; then rm -f *.lst; fi';
+    execute 'if [ -f *.~gm ]; then rm -f *.~gm; fi';
+    execute 'if [ -f *.lxi ]; then rm -f *.lxi; fi';
+    execute 'if [ -f *.log ]; then rm -f *.log; fi';
+    execute 'if [ -f *.put ]; then rm -f *.put; fi';
+    execute 'if [ -f *.txt ]; then rm -f *.txt; fi';
+    execute 'if [ -f *.gdx ]; then rm -f *.gdx; fi';
+    execute 'if [ -f temp.* ]; then rm -f temp.*; fi';
+
+$else.sys
+
+$ifthen %opMode%=='DWH'
+    execute 'move /y ProgressReport.txt "%outputPath%%runName%\%runName%_RunLog.txt"';
+$else
+    execute 'move /y ProgressReport.txt "%outputPath%%runName%"';
+$endif
+
+    execute 'erase "vSPDcase.inc"' ;
+    execute 'if exist *.lst   erase /q *.lst ';
+    execute 'if exist *.~gm   erase /q *.~gm ';
+    execute 'if exist *.lxi   erase /q *.lxi ';
+    execute 'if exist *.log   erase /q *.log ';
+    execute 'if exist *.put   erase /q *.put ';
+    execute 'if exist *.txt   erase /q *.txt ';
+    execute 'if exist *.gdx   erase /q *.gdx ';
+    execute 'if exist temp.*  erase /q temp.*';
+
+$endif.sys
 
 
