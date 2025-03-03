@@ -180,7 +180,7 @@ $else.mode
     execute 'mv -f ProgressReport.txt "%outputPath%%runName%"';
 $endif.mode
     
-    execute 'mv "vSPDcase.inc"' ;
+    execute 'rm -f vSPDcase.inc' ;
     execute 'if [ -f *.lst ]; then rm -f *.lst; fi';
     execute 'if [ -f *.~gm ]; then rm -f *.~gm; fi';
     execute 'if [ -f *.lxi ]; then rm -f *.lxi; fi';
