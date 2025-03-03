@@ -301,7 +301,7 @@ Scalars
 *=====================================================================================
 
 * If input file does not exist then go to the next input file
-$if not exist "%inputPath%\%GDXname%.gdx" $goto nextInput
+$if not exist "%inputPath%/%GDXname%.gdx" $goto nextInput
 
 * Load trading period to be solved
 $onmulti
@@ -310,7 +310,7 @@ $load ca=i_caseID  dt=i_dateTime  tp=i_tradePeriod  case2dt2tp = i_dateTimeTrade
 $gdxin
 
 * Call the GDX routine and load the input data:
-$gdxin "%inputPath%\%GDXname%.gdx"
+$gdxin "%inputPath%/%GDXname%.gdx"
 $load gdxDate = i_gdxDate  caseDefn = i_caseDefn  runMode = i_runMode
 
 $load dtParameter = i_dateTimeParameter  islandParameter = i_dateTimeIslandParameter
@@ -363,7 +363,7 @@ if (inputGDXGDate <= jdate(2023,4,27),
 if (inputGDXGDate < jdate(2025,3,1),
   directionalRiskFactor(ca,dt,rg,br,riskC) = 0 ;
 else
-  execute_load "%inputPath%\%GDXname%.gdx" directionalRiskFactor = i_dateTimeRiskGroupBranch  
+  execute_load "%inputPath%/%GDXname%.gdx" directionalRiskFactor = i_dateTimeRiskGroupBranch  
   
 );
 
@@ -785,8 +785,8 @@ resOfrBlk(ca,dt,o,blk,resC,resT) $ (resrvOfrMW(ca,dt,o,blk,resC,resT) > 0) = yes
 
 
 * TN - Pivot or demand analysis begin
-$Ifi %opMode%=='PVT' $include "Pivot\vSPDSolvePivot_1.gms"
-$Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_1.gms"
+$Ifi %opMode%=='PVT' $include "Pivot/vSPDSolvePivot_1.gms"
+$Ifi %opMode%=='DPS' $include "Demand/vSPDSolveDPS_1.gms"
 * TN - Pivot or demand analysis begin end
 
 *=====================================================================================
@@ -984,8 +984,8 @@ While ( sum[ (ca,dt) $ {unsolvedDT(ca,dt) and case2dt(ca,dt)} , 1 ],
 *   7c. Updating the variable bounds before model solve ------------------------
 
 * TN - Pivot or Demand Analysis - revise input data
-$Ifi %opMode%=='PVT' $include "Pivot\vSPDSolvePivot_2.gms"
-$Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
+$Ifi %opMode%=='PVT' $include "Pivot/vSPDSolvePivot_2.gms"
+$Ifi %opMode%=='DPS' $include "Demand/vSPDSolveDPS_2.gms"
 * TN - Pivot or Demand Analysis - revise input data end
 
 *======= GENERATION, DEMAND AND LOAD FORECAST EQUATIONS ========================
@@ -1400,10 +1400,10 @@ $offtext
 *   6g. Collect and store results of solved periods into output parameters -----
 *   Note: all the price relating outputs such as costs and revenues are calculated in section 7.b
 
-$iftheni.PeriodReport %opMode%=='FTR' $include "FTRental\vSPDSolveFTR_3.gms"
-$elseifi.PeriodReport %opMode%=='DWH' $include "DWmode\vSPDSolveDWH_3.gms"
-$elseifi.PeriodReport %opMode%=='PVT' $include "Pivot\vSPDSolvePivot_3.gms"
-$elseifi.PeriodReport %opMode%=='DPS' $include "Demand\vSPDSolveDPS_3.gms"
+$iftheni.PeriodReport %opMode%=='FTR' $include "FTRental/vSPDSolveFTR_3.gms"
+$elseifi.PeriodReport %opMode%=='DWH' $include "DWmode/vSPDSolveDWH_3.gms"
+$elseifi.PeriodReport %opMode%=='PVT' $include "Pivot/vSPDSolvePivot_3.gms"
+$elseifi.PeriodReport %opMode%=='DPS' $include "Demand/vSPDSolveDPS_3.gms"
 $else.PeriodReport
 
 *   Normal vSPD run - write results out for for reporting
@@ -1790,7 +1790,7 @@ $iftheni.PriceRelatedOutputs %opMode%=='DWH'
   o_PublisedSIRPrice_TP(tp,isl) = sum[(ca,dt) $ case2dt2tp(ca,dt,tp), o_SIRprice_TP(ca,dt,isl) * casefileseconds(ca,tp)] / sum[(ca,dt) $ case2dt2tp(ca,dt,tp), casefileseconds(ca,tp)];
 $elseifi.PriceRelatedOutputs %opMode%=='DPS'
 $elseifi.PriceRelatedOutputs %opMode%=='PVT'
-$elseifi.PriceRelatedOutputs %opMode%=='FTR' $include "FTRental\vSPDSolveFTR_3a.gms"
+$elseifi.PriceRelatedOutputs %opMode%=='FTR' $include "FTRental/vSPDSolveFTR_3a.gms"
 $else.PriceRelatedOutputs
 
 * branch output update
@@ -1817,10 +1817,10 @@ $endif.PriceRelatedOutputs
 * 9. Write results to CSV report files and GDX files
 *=====================================================================================
 * TN - Pivot analysis end
-$iftheni.Output %opMode%=='PVT' $include "Pivot\vSPDSolvePivot_4.gms"
-$elseifi.Output %opMode%=='DPS' $include "Demand\vSPDSolveDPS_4.gms"
-$elseifi.Output %opMode%=='FTR' $include "FTRental\vSPDSolveFTR_4.gms"
-$elseifi.Output %opMode%=='DWH' $include "DWmode\vSPDSolveDWH_4.gms"
+$iftheni.Output %opMode%=='PVT' $include "Pivot/vSPDSolvePivot_4.gms"
+$elseifi.Output %opMode%=='DPS' $include "Demand/vSPDSolveDPS_4.gms"
+$elseifi.Output %opMode%=='FTR' $include "FTRental/vSPDSolveFTR_4.gms"
+$elseifi.Output %opMode%=='DWH' $include "DWmode/vSPDSolveDWH_4.gms"
 $else.Output                   $include "vSPDreport.gms"
 $endif.Output
 
@@ -1833,4 +1833,4 @@ putclose rep 'Case: %GDXname% is finished in ',timeElapsed,'(secs)'/ ;
 $label nextInput
 
 * Post a progress message for use by EMI.
-$if not exist "%inputPath%\%GDXname%.gdx" putclose rep 'The file %inputPath%\%GDXname%.gdx could not be found (', system.time, ').' // ;
+$if not exist "%inputPath%/%GDXname%.gdx" putclose rep 'The file %inputPath%/%GDXname%.gdx could not be found (', system.time, ').' // ;

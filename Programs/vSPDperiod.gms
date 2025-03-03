@@ -15,7 +15,7 @@ $include vSPDsettings.inc
 $include vSPDcase.inc
 
 * If input file does not exist then go to the next input file
-$ifthen exist "%inputPath%\%GDXname%.gdx"
+$ifthen exist "%inputPath%/%GDXname%.gdx"
 
 
 *===============================================================================
@@ -38,7 +38,7 @@ alias (tp,tp1), (dt,dt1), (ca,ca1);
 Parameter casePublishedSecs(ca,tp) 'Time Weight Seconds apply to case file for final pricing calculation' ;
 
 
-$gdxin "%inputPath%\%GDXname%.gdx"
+$gdxin "%inputPath%/%GDXname%.gdx"
 $load case2dt2tp = i_dateTimeTradePeriodMap
 $load casePublishedSecs = i_priceCaseFilesPublishedSecs
 $gdxin
@@ -83,7 +83,7 @@ sdt(dt) = yes $ sum[ (sca(ca),stp(tp)) $ scase2dt2tp(ca,dt,tp), 1 ] ;
 stp(tp) = yes $ sum[ (sca(ca),sdt(dt)) $ scase2dt2tp(ca,dt,tp), 1 ] ;
 
 
-execute_unload '%programPath%\vSPDperiod.gdx'
+execute_unload '%programPath%/vSPDperiod.gdx'
   sca    = i_caseID
   stp    = i_tradePeriod
   sdt    = i_dateTime
