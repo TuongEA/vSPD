@@ -4,6 +4,18 @@
     "nodes": [
         {
             "codecMib": 106,
+            "file": "Demand/DPSreportSetup.gms",
+            "name": "DPSreportSetup.gms",
+            "type": "gms"
+        },
+        {
+            "codecMib": 106,
+            "file": "Demand/vSPDSolveDPS_4.gms",
+            "name": "vSPDSolveDPS_4.gms",
+            "type": "gms"
+        },
+        {
+            "codecMib": 106,
             "file": "merge_gdx.gms",
             "name": "merge_gdx.gms",
             "type": "gms"
