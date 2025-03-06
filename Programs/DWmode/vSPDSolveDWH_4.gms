@@ -10,7 +10,7 @@
 *=====================================================================================
 
 * Data warehouse summary result
-File DWsummaryResults /"%outputPath%\%runName%\%runName%_DWSummaryResults.csv"/;
+File DWsummaryResults /"%outputPath%/%runName%/%runName%_DWSummaryResults.csv"/;
 DWsummaryResults.pc = 5; DWsummaryResults.lw = 0; DWsummaryResults.pw = 9999 ;
 DWSummaryResults.ap = 1; DWSummaryResults.nd = 5; DWsummaryResults.nw = 20;
 put DWSummaryResults ;
@@ -20,7 +20,7 @@ loop( (ca,dt,tp) $ case2dt2tp(ca,dt,tp),
 ) ;
 
 * Data warehouse energy result
-File DWenergyResults  /"%outputPath%\%runName%\%runName%_DWEnergyResults.csv"/;
+File DWenergyResults  /"%outputPath%/%runName%/%runName%_DWEnergyResults.csv"/;
 DWenergyResults.pc = 5; DWenergyResults.lw = 0; DWenergyResults.pw = 9999;
 DWEnergyResults.ap = 1; DWEnergyResults.nd = 5; DWEnergyResults.nw = 20;
 put DWEnergyResults ;
@@ -30,7 +30,7 @@ loop( (ca,dt,tp,n) $ { case2dt2tp(ca,dt,tp) and node(ca,dt,n) },
 ) ;
 
 * Data warehouse reserve result
-File DWreserveResults /"%outputPath%\%runName%\%runName%_DWReserveResults.csv"/;
+File DWreserveResults /"%outputPath%/%runName%/%runName%_DWReserveResults.csv"/;
 DWreserveResults.pc = 5; DWreserveResults.lw = 0; DWreserveResults.pw = 9999;
 DWreserveResults.ap = 1; DWreserveResults.nd = 5; DWreserveResults.nw = 20;
 put DWReserveResults ;
@@ -40,7 +40,7 @@ loop( (ca,dt,tp,isl) $ case2dt2tp(ca,dt,tp),
 ) ;
 
 * Data warehouse published energy result
-File DWPublishedEnergyPrices  /"%outputPath%\%runName%\%runName%_DWPublishedEnergyPrices.csv"/;
+File DWPublishedEnergyPrices  /"%outputPath%/%runName%/%runName%_DWPublishedEnergyPrices.csv"/;
 DWPublishedEnergyPrices.pc = 5; DWPublishedEnergyPrices.lw = 0; DWPublishedEnergyPrices.pw = 9999;
 DWPublishedEnergyPrices.ap = 1; DWPublishedEnergyPrices.nd = 5; DWPublishedEnergyPrices.nw = 20;
 put DWPublishedEnergyPrices ;
@@ -49,7 +49,7 @@ loop( (tp,n),
 ) ;
 
 * Data warehouse published reserve prices
-File  DWPublishedReservePrices  /"%outputPath%\%runName%\%runName%_DWPublishedReservePrices.csv"/;
+File  DWPublishedReservePrices  /"%outputPath%/%runName%/%runName%_DWPublishedReservePrices.csv"/;
  DWPublishedReservePrices.pc = 5;  DWPublishedReservePrices.lw = 0;  DWPublishedReservePrices.pw = 9999;
  DWPublishedReservePrices.ap = 1;  DWPublishedReservePrices.nd = 5;  DWPublishedReservePrices.nw = 20;
 put  DWPublishedReservePrices ;
