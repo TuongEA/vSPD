@@ -97,17 +97,17 @@ $endif.ovrd
 $ifThen.sys %system.Platform% == 'LEX'
 $iftheni.mode %opMode%=='PVT'
   execute 'mkdir  "%outputPath%%runName%/Programs/Pivot"'
-  execute 'cp -r "Pivot/*.*" "%outputPath%%runName%/Programs/Pivot"'
+  execute 'cp -r Pivot/*.* %outputPath%%runName%/Programs/Pivot'
 $elseifi.mode %opMode%=='DPS' execute 'gams Demand/DPSreportSetup.gms'
   execute 'mkdir  "%outputPath%%runName%/Programs/Demand"'
-  execute 'cp -r "Demand/*.*" "%outputPath%%runName%/Programs/Demand"'
+  execute 'cp -r Demand/*.* %outputPath%%runName%/Programs/Demand'
 $elseifi.mode %opMode%=='FTR' execute 'gams FTRental/FTRreportSetup.gms'
   execute 'cp -r FTR*.inc "%outputPath%%runName%/Programs"'
   execute 'mkdir  "%outputPath%%runName%/Programs/FTRental"'
-  execute 'cp -r "FTRental/*.*" "%outputPath%%runName%/Programs/FTRental"'
+  execute 'cp -r FTRental/*.* %outputPath%%runName%/Programs/FTRental'
 $elseifi.mode %opMode%=='DWH' execute 'gams DWmode/DWHreportSetup.gms'
   execute 'mkdir  "%outputPath%%runName%/Programs/DWmode"'
-  execute 'cp -r "DWmode/*.*" "%outputPath%%runName%/Programs/DWmode"'
+  execute 'cp -r DWmode/*.* %outputPath%%runName%/Programs/DWmode'
 $else.mode
 $endif.mode
 $else.sys
