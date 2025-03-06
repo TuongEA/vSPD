@@ -305,7 +305,7 @@ $if not exist "%inputPath%/%GDXname%.gdx" $goto nextInput
 
 * Load trading period to be solved
 $onmulti
-$gdxin "vSPDPeriod.gdx"
+$gdxin "vSPDperiod.gdx"
 $load ca=i_caseID  dt=i_dateTime  tp=i_tradePeriod  case2dt2tp = i_dateTimeTradePeriod
 $gdxin
 
