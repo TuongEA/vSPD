@@ -10,11 +10,11 @@
 *                       vSPDSolve to begin the demand sensitivity analysis loop
 *=====================================================================================
 Set non_conforming_nodes
-$include "Demand\non_conforming_load.inc"
+$include "Demand/non_conforming_load.inc"
 ;
 
 Set pricing_nodes(n)
-$include "Demand\pricing_nodes.inc"
+$include "Demand/pricing_nodes.inc"
 ;
 
 * Defines the set of scenarios for the demand analysis
