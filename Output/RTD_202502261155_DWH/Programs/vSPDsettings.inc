@@ -3,7 +3,7 @@ $inlinecom ## ##
 $eolcom !
 
 *+++ Paths +++
-$setglobal runName                       RTD_202502261155_DPS
+$setglobal runName                       RTD_202502261155_DWH
 
 $setglobal programPath                   '%system.fp%' 
 $setglobal inputPath                     '%system.fp%../Input/'
@@ -44,4 +44,4 @@ $setglobal licenseMode                     1
 
 
 *+++ Various switches +++
-$setglobal opMode                          DPS      ! SPD for normal SPD run;
+$setglobal opMode                          DWH      ! SPD for normal SPD run;

@@ -16,11 +16,11 @@
 *=====================================================================================
 
 * Trading period level report
-$if not exist "%outputPath%\%runName%\%runName%_BusResults_TP.csv" $goto SkipTP
+$if not exist "%outputPath%/%runName%/%runName%_BusResults_TP.csv" $goto SkipTP
 
 * Trading period summary result
 File
-SummaryResults_TP / "%outputPath%\%runName%\%runName%_SummaryResults_TP.csv" / ;
+SummaryResults_TP / "%outputPath%/%runName%/%runName%_SummaryResults_TP.csv" / ;
 SummaryResults_TP.pc = 5 ;    SummaryResults_TP.lw = 0 ;
 SummaryResults_TP.pw = 9999 ; SummaryResults_TP.ap = 1 ;
 SummaryResults_TP.nd = 5 ;    SummaryResults_TP.nw = 20 ;
@@ -36,7 +36,7 @@ loop( (ca,dt,tp) $ case2dt2tp(ca,dt,tp),
 ) ;
 
 * Trading period island result
-File IslandResults_TP /"%outputPath%\%runName%\%runName%_IslandResults_TP.csv"/;
+File IslandResults_TP /"%outputPath%/%runName%/%runName%_IslandResults_TP.csv"/;
 IslandResults_TP.pc = 5 ;     IslandResults_TP.lw = 0 ;
 IslandResults_TP.pw = 9999 ;  IslandResults_TP.ap = 1 ;
 IslandResults_TP.nd = 5 ;
@@ -59,7 +59,7 @@ loop( (ca,dt,tp,isl) $ case2dt2tp(ca,dt,tp),
 
 
 * Trading period bus result
-File BusResults_TP   / "%outputPath%\%runName%\%runName%_BusResults_TP.csv" / ;
+File BusResults_TP   / "%outputPath%/%runName%/%runName%_BusResults_TP.csv" / ;
 BusResults_TP.pc = 5 ;
 BusResults_TP.lw = 0 ;
 BusResults_TP.pw = 9999 ;
@@ -71,7 +71,7 @@ loop( (ca,dt,tp,b) $ { case2dt2tp(ca,dt,tp) and  bus(ca,dt,b) },
 ) ;
 
 * Trading period node result
-File NodeResults_TP  /"%outputPath%\%runName%\%runName%_NodeResults_TP.csv" / ;
+File NodeResults_TP  /"%outputPath%/%runName%/%runName%_NodeResults_TP.csv" / ;
 NodeResults_TP.pc = 5 ; NodeResults_TP.lw = 0 ; NodeResults_TP.pw = 9999 ;
 NodeResults_TP.ap = 1 ; NodeResults_TP.nd = 4 ;
 put NodeResults_TP ;
@@ -80,7 +80,7 @@ loop( (ca,dt,tp,n) $ { case2dt2tp(ca,dt,tp) and node(ca,dt,n) },
 ) ;
 
 * Published energy prices
-File PublishedEnergyPrices_TP  /"%outputPath%\%runName%\%runName%_PublishedEnergyPrices_TP.csv"/;
+File PublishedEnergyPrices_TP  /"%outputPath%/%runName%/%runName%_PublishedEnergyPrices_TP.csv"/;
 PublishedEnergyPrices_TP.pc = 5; PublishedEnergyPrices_TP.lw = 0; PublishedEnergyPrices_TP.pw = 9999;
 PublishedEnergyPrices_TP.ap = 1; PublishedEnergyPrices_TP.nd = 5; PublishedEnergyPrices_TP.nw = 20;
 put PublishedEnergyPrices_TP ;
@@ -89,7 +89,7 @@ loop( (dt,tp,n) $ tp2dt(tp,dt) ,
 ) ;
 
 * Published reserve prices
-File PublishedReservePrices_TP  /"%outputPath%\%runName%\%runName%_PublishedReservePrices_TP.csv"/;
+File PublishedReservePrices_TP  /"%outputPath%/%runName%/%runName%_PublishedReservePrices_TP.csv"/;
 PublishedReservePrices_TP.pc = 5; PublishedReservePrices_TP.lw = 0; PublishedReservePrices_TP.pw = 9999;
 PublishedReservePrices_TP.ap = 1; PublishedReservePrices_TP.nd = 5; PublishedReservePrices_TP.nw = 20;
 put PublishedReservePrices_TP ;
@@ -98,7 +98,7 @@ loop( (dt,tp,isl) $ tp2dt(tp,dt) ,
 ) ;
 
 * Trading period offer result
-File OfferResults_TP  /"%outputPath%\%runName%\%runName%_OfferResults_TP.csv"/ ;
+File OfferResults_TP  /"%outputPath%/%runName%/%runName%_OfferResults_TP.csv"/ ;
 OfferResults_TP.pc = 5 ;      OfferResults_TP.lw = 0 ;
 OfferResults_TP.pw = 9999 ;   OfferResults_TP.ap = 1 ;
 OfferResults_TP.nd = 4 ;
@@ -109,7 +109,7 @@ loop( (ca,dt,tp,o,trdr) $ {case2dt2tp(ca,dt,tp) and offer(ca,dt,o) and OfferTrad
 ) ;
 
 * Trading period bid result
-File BidResults_TP    / "%outputPath%\%runName%\%runName%_BidResults_TP.csv" / ;
+File BidResults_TP    / "%outputPath%/%runName%/%runName%_BidResults_TP.csv" / ;
 BidResults_TP.pc = 5 ;     BidResults_TP.lw = 0 ;
 BidResults_TP.pw = 9999 ;  BidResults_TP.ap = 1 ;
 BidResults_TP.nd = 4 ;
@@ -121,7 +121,7 @@ loop( (ca,dt,tp,bd,trdr) $ { case2dt2tp(ca,dt,tp) and bid(ca,dt,bd) and BidTrade
 
 * Trading period reserve result
 File
-ReserveResults_TP /"%outputPath%\%runName%\%runName%_ReserveResults_TP.csv" / ;
+ReserveResults_TP /"%outputPath%/%runName%/%runName%_ReserveResults_TP.csv" / ;
 ReserveResults_TP.pc = 5 ;    ReserveResults_TP.lw = 0 ;
 ReserveResults_TP.pw = 9999 ; ReserveResults_TP.ap = 1 ;
 ReserveResults_TP.nd = 3 ;
@@ -134,7 +134,7 @@ loop( (ca,dt,tp,isl) $ case2dt2tp(ca,dt,tp),
 
 
 * Trading period risk result
-File riskResults_TP / "%outputPath%\%runName%\%runName%_RiskResults_TP.csv" /;
+File riskResults_TP / "%outputPath%/%runName%/%runName%_RiskResults_TP.csv" /;
 riskResults_TP.pc = 5;        riskResults_TP.lw = 0;
 riskResults_TP.pw = 9999;     riskResults_TP.ap = 1 ;
 riskResults_TP.nd = 4 ;
@@ -202,7 +202,7 @@ loop( (ca,dt,tp,isl,rg,resC,GenRisk) $ { case2dt2tp(ca,dt,tp) and (o_GenRiskGrou
 
 * Trading period branch result
 File
-BranchResults_TP  / "%outputPath%\%runName%\%runName%_BranchResults_TP.csv" / ;
+BranchResults_TP  / "%outputPath%/%runName%/%runName%_BranchResults_TP.csv" / ;
 BranchResults_TP.pc = 5 ;     BranchResults_TP.lw = 0 ;
 BranchResults_TP.pw = 9999 ;  BranchResults_TP.ap = 1 ;
 BranchResults_TP.nd = 5 ;
@@ -218,7 +218,7 @@ loop( (ca,dt,tp,br,frB,toB) $ { case2dt2tp(ca,dt,tp) and branchDefn(ca,dt,br,frB
 
 * Trading period branch constraint result
 File BrCstrResults_TP
-/ "%outputPath%\%runName%\%runName%_BrConstraintResults_TP.csv" / ;
+/ "%outputPath%/%runName%/%runName%_BrConstraintResults_TP.csv" / ;
 BrCstrResults_TP.pc = 5 ;      BrCstrResults_TP.lw = 0 ;
 BrCstrResults_TP.pw = 9999 ;   BrCstrResults_TP.ap = 1 ;
 BrCstrResults_TP.nd = 5 ;
@@ -232,7 +232,7 @@ loop( (ca,dt,tp,brCstr) $ { case2dt2tp(ca,dt,tp) and branchConstraint(ca,dt,brCs
 
 * Trading period market node constraint result
 File MnodeCstrResults_TP
-/ "%outputPath%\%runName%\%runName%_MnodeConstraintResults_TP.csv" / ;
+/ "%outputPath%/%runName%/%runName%_MNodeConstraintResults_TP.csv" / ;
 MnodeCstrResults_TP.pc = 5 ;    MnodeCstrResults_TP.lw = 0 ;
 MnodeCstrResults_TP.pw = 9999 ; MnodeCstrResults_TP.ap = 1 ;
 MnodeCstrResults_TP.nd = 5 ;
@@ -259,7 +259,7 @@ Scalar zeroTolerance / 0.000001 / ;
 
 
 * Audit - branch loss result
-File branchLoss_Audit /"%outputPath%\%runName%\%runName%_Audit_BranchLoss.csv"/;
+File branchLoss_Audit /"%outputPath%/%runName%/%runName%_Audit_BranchLoss.csv"/;
 branchLoss_Audit.pc = 5 ;
 branchLoss_Audit.lw = 0 ;
 branchLoss_Audit.pw = 9999 ;
@@ -276,7 +276,7 @@ loop( (ca,dt,tp,br) $ { case2dt2tp(ca,dt,tp) and branch(ca,dt,br) },
 ) ;
 
 * Audit - bus result
-File busResults_Audit /"%outputPath%\%runName%\%runName%_Audit_BusResults.csv"/;
+File busResults_Audit /"%outputPath%/%runName%/%runName%_Audit_BusResults.csv"/;
 busResults_Audit.pc = 5 ;
 busResults_Audit.lw = 0 ;
 busResults_Audit.pw = 9999 ;
@@ -291,7 +291,7 @@ loop( (ca,dt,tp,b,isl) $ { case2dt2tp(ca,dt,tp) and  o_bus(ca,dt,b) and busIslan
 
 * Audit - market node result
 File
-MNodeResults_Audit  /"%outputPath%\%runName%\%runName%_Audit_MNodeResults.csv"/;
+MNodeResults_Audit  /"%outputPath%/%runName%/%runName%_Audit_MNodeResults.csv"/;
 MNodeResults_Audit.pc = 5 ;
 MNodeResults_Audit.lw = 0 ;
 MNodeResults_Audit.pw = 9999 ;
@@ -306,7 +306,7 @@ loop( (ca,dt,tp,o,isl) $ { case2dt2tp(ca,dt,tp) and offer(ca,dt,o) and offerIsla
 
 * Audit - branch result
 File
-brchResults_Audit  /"%outputPath%\%runName%\%runName%_Audit_BranchResults.csv"/;
+brchResults_Audit  /"%outputPath%/%runName%/%runName%_Audit_BranchResults.csv"/;
 brchResults_Audit.pc = 5 ;
 brchResults_Audit.lw = 0 ;
 brchResults_Audit.pw = 9999 ;
@@ -330,7 +330,7 @@ loop( (ca,dt,tp,br) $ {case2dt2tp(ca,dt,tp) and branch(ca,dt,br)},
 
 * Audit - risk result
 File
-riskResults_Audit    /"%outputPath%\%runName%\%runName%_Audit_RiskResults.csv"/;
+riskResults_Audit    /"%outputPath%/%runName%/%runName%_Audit_RiskResults.csv"/;
 riskResults_Audit.pc = 5 ;
 riskResults_Audit.lw = 0 ;
 riskResults_Audit.pw = 9999 ;
@@ -423,7 +423,7 @@ loop( (ca,dt,tp,isl,resC) $case2dt2tp(ca,dt,tp),
 ) ;
 
 * Audit - objective result
-File objResults_Audit /"%outputPath%\%runName%\%runName%_Audit_ObjResults.csv"/;
+File objResults_Audit /"%outputPath%/%runName%/%runName%_Audit_ObjResults.csv"/;
 objResults_Audit.pc = 5 ;
 objResults_Audit.lw = 0 ;
 objResults_Audit.pw = 9999 ;
@@ -436,9 +436,9 @@ loop( (ca,dt,tp) $ case2dt2tp(ca,dt,tp),
 ) ;
 
 
-execute_unload '%outputPath%\%runName%\%GDXname%_AllData.gdx' ;
+execute_unload '%outputPath%/%runName%/%GDXname%_AllData.gdx' ;
 $endif.AuditReport
 *===============================================================================
-execute_unload '%outputPath%\%runName%\%GDXname%_AllData.gdx' ;
+*execute_unload '%outputPath%/%runName%/%GDXname%_AllData.gdx' ;
 
 

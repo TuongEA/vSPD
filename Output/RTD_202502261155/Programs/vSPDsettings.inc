@@ -6,9 +6,9 @@ $eolcom !
 $setglobal runName                       RTD_202502261155
 
 $setglobal programPath                   '%system.fp%' 
-$setglobal inputPath                     '%system.fp%..\Input\'
-$setglobal outputPath                    '%system.fp%..\Output\'
-$setglobal ovrdPath                      '%system.fp%..\Override\'
+$setglobal inputPath                     '%system.fp%../Input/'
+$setglobal outputPath                    '%system.fp%../Output/'
+$setglobal ovrdPath                      '%system.fp%../Override/'
 
 $setglobal vSPDinputOvrdData             ''   !Name of override file 
 
