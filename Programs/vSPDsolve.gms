@@ -360,7 +360,7 @@ if (inputGDXGDate <= jdate(2023,4,27),
   SPDlossTolerance = 0.005 ;
 );
 
-if (inputGDXGDate < jdate(2025,3,1),
+if (inputGDXGDate < jdate(2025,3,17),
   directionalRiskFactor(ca,dt,rg,br,riskC) = 0 ;
 else
   execute_load "%inputPath%/%GDXname%.gdx" directionalRiskFactor = i_dateTimeRiskGroupBranch  
