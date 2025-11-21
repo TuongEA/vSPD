@@ -15,7 +15,7 @@
 ];
 
 *$ontext
-Files DPSNodeResults   /"%OutputPath%%runName%\%runName%_NodePriceSensitivity.csv"/;
+Files DPSNodeResults   /"%OutputPath%%runName%/%runName%_NodePriceSensitivity.csv"/;
   DPSNodeResults.pc = 5; DPSNodeResults.lw = 0; DPSNodeResults.pw = 9999;
   DPSNodeResults.ap = 1; DPSNodeResults.nd = 3;
   put DPSNodeResults;
@@ -26,7 +26,7 @@ Files DPSNodeResults   /"%OutputPath%%runName%\%runName%_NodePriceSensitivity.cs
 
 
 
-Files DPSIslandResults   /"%OutputPath%%runName%\%runName%_IslandSensitivity.csv"/;
+Files DPSIslandResults   /"%OutputPath%%runName%/%runName%_IslandSensitivity.csv"/;
   DPSIslandResults.pc = 5; DPSIslandResults.lw = 0; DPSIslandResults.pw = 9999;
   DPSIslandResults.ap = 1; DPSIslandResults.nd = 3;
   put DPSIslandResults;
@@ -38,7 +38,7 @@ Files DPSIslandResults   /"%OutputPath%%runName%\%runName%_IslandSensitivity.csv
 *$offtext
 
 $stop
-execute_unload '%OutputPath%%runName%\%runName%_DRSOutput_TP.gdx'
+execute_unload '%OutputPath%%runName%/%runName%_DRSOutput_TP.gdx'
   i_dateTime
   i_island
   drs
