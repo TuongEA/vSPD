@@ -3,12 +3,12 @@ $inlinecom ## ##
 $eolcom !
 
 *+++ Paths +++
-$setglobal runName                       Testing
+$setglobal runName                       RTD_202502261155_DPS
 
 $setglobal programPath                   '%system.fp%' 
-$setglobal inputPath                     '%system.fp%..\Input\'
-$setglobal outputPath                    '%system.fp%..\Output\'
-$setglobal ovrdPath                      '%system.fp%..\Override\'
+$setglobal inputPath                     '%system.fp%../Input/'
+$setglobal outputPath                    '%system.fp%../Output/'
+$setglobal ovrdPath                      '%system.fp%../Override/'
 
 $setglobal vSPDinputOvrdData             ''   !Name of override file 
 
@@ -44,4 +44,4 @@ $setglobal licenseMode                     1
 
 
 *+++ Various switches +++
-$setglobal opMode                          SPD      ! SPD for normal SPD run;
+$setglobal opMode                          DPS      ! SPD for normal SPD run;

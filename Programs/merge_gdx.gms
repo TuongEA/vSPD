@@ -1,5 +1,5 @@
 $include mergeGDXsettings.inc
-$call gdxmerge "%inputPath%\%yyyymmdd%\*.gdx" output = 'tempGDX'
+$call gdxmerge "%inputPath%/%yyyymmdd%/*.gdx" output = 'tempGDX'
 
 *$ontext
 Sets
@@ -306,7 +306,7 @@ i_dateTimeScarcityNodeFactor(ca,dt,n,blk,bidofrCmpnt) = sum[ (gn,tp) $ {i_dateTi
 i_dateTimeScarcityNodeLimit(ca,dt,n,blk,bidofrCmpnt) = sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, dateTimeScarcityNodeLimit(gn,ca,dt,n,blk,bidofrCmpnt)] ;
   
     
-execute_unload "%inputPath%\Pricing_%yyyymmdd%.gdx"
+execute_unload "%inputPath%/Pricing_%yyyymmdd%.gdx"
     i_gdxDate, i_caseDefn, i_runMode
     i_dateTimeTradePeriodMap, i_dateTimeParameter, i_dateTimeIslandParameter
     i_node,i_dateTimeNodetoNode, i_dateTimeNodeParameter
